@@ -25,12 +25,13 @@ module SuperDiff
         OperationTreeBuilders::ActiveRecordModel,
         OperationTreeBuilders::ActiveRecordRelation,
       )
-      config.add_extra_diff_formatter_classes(
-        DiffFormatters::ActiveRecordRelation,
-      )
-      config.add_extra_inspector_classes(
-        ObjectInspection::Inspectors::ActiveRecordModel,
-        ObjectInspection::Inspectors::ActiveRecordRelation,
+      # TODO
+      # config.add_extra_diff_formatter_classes(
+        # DiffFormatters::ActiveRecordRelation,
+      # )
+      config.add_extra_inspection_tree_builder_classes(
+        ObjectInspection::InspectionTreeBuilders::ActiveRecordModel,
+        ObjectInspection::InspectionTreeBuilders::ActiveRecordRelation,
       )
     end
   end

@@ -7,11 +7,15 @@ module SuperDiff
         PROJECT_DIRECTORY = Pathname.new("../../../..").expand_path(__dir__)
         TEMP_DIRECTORY = PROJECT_DIRECTORY.join("tmp")
 
-        attr_private :code, :color_enabled, :preserve_as_whole_file
-
-        def initialize(code, color_enabled:, preserve_as_whole_file: false)
+        def initialize(
+          code,
+          color_enabled:,
+          configuration: {},
+          preserve_as_whole_file: false
+        )
           @code = code.strip
           @color_enabled = color_enabled
+          @configuration = configuration
           @preserve_as_whole_file = preserve_as_whole_file
         end
 
@@ -31,8 +35,15 @@ module SuperDiff
 
         private
 
-        attr_query :color_enabled?
-        attr_query :preserve_as_whole_file?
+        attr_reader :code, :configuration
+
+        def color_enabled?
+          @color_enabled
+        end
+
+        def preserve_as_whole_file?
+          @preserve_as_whole_file
+        end
 
         def result_of_command
           @_result_of_command ||=
@@ -65,7 +76,7 @@ module SuperDiff
         end
 
         def color_option
-          color_enabled ? "--color" : "--no-color"
+          color_enabled? ? "--color" : "--no-color"
         end
 
         def tempfile
@@ -86,7 +97,8 @@ module SuperDiff
 
               test_plan = TestPlan.new(
                 using_outside_of_zeus: true,
-                color_enabled: #{color_enabled?}
+                color_enabled: #{color_enabled?.inspect},
+                configuration: #{configuration.inspect}
               )
               test_plan.boot
               #{test_plan_prelude}

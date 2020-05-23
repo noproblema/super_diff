@@ -46,7 +46,6 @@ module SuperDiff
             key: index,
             value: value,
             index: index,
-            index_in_collection: collection.index(value),
           )
         end
 
@@ -58,7 +57,6 @@ module SuperDiff
             key: index,
             value: value,
             index: index,
-            index_in_collection: collection.index(value),
           )
         end
 
@@ -70,7 +68,6 @@ module SuperDiff
             key: index,
             value: value,
             index: index,
-            index_in_collection: collection.index(value),
           )
         end
 

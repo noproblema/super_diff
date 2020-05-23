@@ -38,10 +38,10 @@ module SuperDiff
           message =
             "Expected test to produce output, but it did not.\n\n" +
             "Expected output to contain:\n\n" +
-            CommandRunner::OutputHelpers.bookended(expected_output) +
+            SuperDiff::Test::OutputHelpers.bookended(expected_output) +
             "\n" +
             "Actual output:\n\n" +
-            CommandRunner::OutputHelpers.bookended(actual_output)
+            SuperDiff::Test::OutputHelpers.bookended(actual_output)
 
           if ["1", "true"].include?(ENV["SHOW_DIFF"])
             ::RSpec::Matchers::ExpectedsForMultipleDiffs.

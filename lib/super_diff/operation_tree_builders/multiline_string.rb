@@ -38,12 +38,19 @@ module SuperDiff
 
       attr_reader :sequence_matcher, :original_expected, :original_actual
 
-      def split_into_lines(str)
-        str.
+      def split_into_lines(string)
+        string.scan(/.+(?:\r|\n|\r\n|\Z)/)
+=begin
+        # TODO? string.scan(/.+(?:\r|\n|\r\n|\Z)/)
+        # XXX: Actually no don't do this, this doesn't work
+        string.
           split(/(\r?\n)/).
           each_slice(2).
           map(&:join).
-          map { |line| line.inspect[1..-2] }
+          # TODO: Test that quotes and things don't get escaped but escape
+          # characters do
+          map { |line| line.inspect[1..-2].gsub(/\\"/, '"').gsub(/\\'/, "'") }
+=end
       end
 
       def opcodes

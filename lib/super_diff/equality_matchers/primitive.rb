@@ -2,11 +2,8 @@ module SuperDiff
   module EqualityMatchers
     class Primitive < Base
       def self.applies_to?(value)
-        value.is_a?(Symbol) ||
-          value.is_a?(Numeric) ||
-          # TODO: Test this
-          value == true ||
-          value == false
+        # TODO: Test all of these options
+        SuperDiff.primitive?(value)
       end
 
       def fail
@@ -17,14 +14,14 @@ module SuperDiff
             Helpers.style(
               :alpha,
               "Expected: " +
-              ObjectInspection.inspect(expected, as_single_line: true),
+              ObjectInspection.inspect(expected, as_lines: false),
             )
           }
           #{
             Helpers.style(
               :beta,
               "  Actual: " +
-              ObjectInspection.inspect(actual, as_single_line: true),
+              ObjectInspection.inspect(actual, as_lines: false),
             )
           }
         OUTPUT

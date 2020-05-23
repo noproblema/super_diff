@@ -1,239 +1,469 @@
 require "spec_helper"
 
-RSpec.describe SuperDiff::ObjectInspection do
-  describe ".inspect" do
+RSpec.describe SuperDiff::ObjectInspection, type: :unit do
+  describe ".inspect", "for Ruby objects" do
     context "given nil" do
-      context "given as_single_line: true" do
-        it "returns nil, inspected" do
-          inspection = described_class.inspect(nil, as_single_line: true)
-          expect(inspection).to eq("nil")
+      context "given as_lines: false" do
+        it "returns 'nil'" do
+          string = described_class.inspect(nil, as_lines: false)
+          expect(string).to eq("nil")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns nil, inspected" do
-          inspection = described_class.inspect(nil, as_single_line: false)
-          expect(inspection).to eq("nil")
+      context "given as_lines: true" do
+        it "returns nil wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            nil,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(nil),
+            ),
+          ])
         end
       end
     end
 
     context "given true" do
-      context "given as_single_line: true" do
-        it "returns nil, inspected" do
-          inspection = described_class.inspect(nil, as_single_line: true)
-          expect(inspection).to eq("nil")
+      context "given as_lines: false" do
+        it "returns an inspected version of true" do
+          string = described_class.inspect(true, as_lines: false)
+          expect(string).to eq("true")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns nil, inspected" do
-          inspection = described_class.inspect(nil, as_single_line: false)
-          expect(inspection).to eq("nil")
+      context "given as_lines: true" do
+        it "returns true wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            true,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(true),
+            ),
+          ])
         end
       end
     end
 
     context "given false" do
-      context "given as_single_line: false" do
-        it "returns false, inspected" do
-          inspection = described_class.inspect(false, as_single_line: false)
-          expect(inspection).to eq("false")
+      context "given as_lines: false" do
+        it "returns an inspected version of false" do
+          string = described_class.inspect(false, as_lines: false)
+          expect(string).to eq("false")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns false, inspected" do
-          inspection = described_class.inspect(false, as_single_line: false)
-          expect(inspection).to eq("false")
+      context "given as_lines: true" do
+        it "returns false wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            false,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(false),
+            ),
+          ])
         end
       end
     end
 
     context "given a number" do
-      context "given as_single_line: true" do
-        it "returns the number as a string" do
-          inspection = described_class.inspect(3, as_single_line: true)
-          expect(inspection).to eq("3")
+      context "given as_lines: false" do
+        it "returns an inspected version of the number" do
+          string = described_class.inspect(3, as_lines: false)
+          expect(string).to eq("3")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns the number as a string" do
-          inspection = described_class.inspect(3, as_single_line: false)
-          expect(inspection).to eq("3")
+      context "given as_lines: true" do
+        it "returns the number wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            3,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(3),
+            ),
+          ])
         end
       end
     end
 
     context "given a symbol" do
-      context "given as_single_line: true" do
-        it "returns the symbol, inspected" do
-          inspection = described_class.inspect(:foo, as_single_line: true)
-          expect(inspection).to eq(":foo")
+      context "given as_lines: false" do
+        it "returns an inspected version of the symbol" do
+          string = described_class.inspect(:foo, as_lines: false)
+          expect(string).to eq(":foo")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns the symbol, inspected" do
-          inspection = described_class.inspect(:foo, as_single_line: false)
-          expect(inspection).to eq(":foo")
+      context "given as_lines: true" do
+        it "returns an inspected version of the symbol wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            :foo,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(:foo),
+            ),
+          ])
         end
       end
     end
 
     context "given a regex" do
-      context "given as_single_line: true" do
-        it "returns the regex, inspected" do
-          inspection = described_class.inspect(/foo/, as_single_line: true)
-          expect(inspection).to eq("/foo/")
+      context "given as_lines: false" do
+        it "returns an inspected version of the regex" do
+          string = described_class.inspect(/foo/, as_lines: false)
+          expect(string).to eq("/foo/")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns the regex, inspected" do
-          inspection = described_class.inspect(/foo/, as_single_line: false)
-          expect(inspection).to eq("/foo/")
+      context "given as_lines: true" do
+        it "returns an inspected version of the regex wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            /foo/,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(/foo/),
+            ),
+          ])
         end
       end
     end
 
     context "given a single-line string" do
-      it "returns the string surrounded by quotes" do
-        inspection = described_class.inspect("Marty", as_single_line: true)
-        expect(inspection).to eq('"Marty"')
+      context "given as_lines: false" do
+        it "returns an inspected version of the string" do
+          inspection = described_class.inspect("Marty", as_lines: false)
+          expect(inspection).to eq('"Marty"')
+        end
+      end
+
+      context "given as_lines: true" do
+        it "returns an inspected version of the string wrapped in a single Line" do
+          tiered_lines = described_class.inspect(
+            "Marty",
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %("Marty"),
+            ),
+          ])
+        end
       end
     end
 
     context "given a multi-line string" do
       context "that does not contain color codes" do
-        it "returns the string surrounded by quotes, with newline characters escaped" do
-          inspection = described_class.inspect(
-            "This is a line\nAnd that's a line\nAnd there's a line too",
-            as_single_line: true,
-          )
-          expect(inspection).to eq(
-            %("This is a line\\nAnd that's a line\\nAnd there's a line too"),
-          )
+        context "given as_lines: false" do
+          it "returns an inspected version of the string, with newline characters escaped" do
+            string = described_class.inspect(
+              "This is a line\nAnd that's a line\nAnd there's a line too",
+              as_lines: false,
+            )
+            expect(string).to eq(
+              %("This is a line\\nAnd that's a line\\nAnd there's a line too"),
+            )
+          end
+        end
+
+        context "given as_lines: true" do
+          it "returns an inspected version of the string, with newline characters escaped, wrapped in a Line" do
+            tiered_lines = described_class.inspect(
+              "This is a line\nAnd that's a line\nAnd there's a line too",
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
+            )
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %("This is a line\\nAnd that's a line\\nAnd there's a line too"),
+              ),
+            ])
+          end
         end
       end
 
       context "that contains color codes" do
-        it "escapes the color codes" do
-          colors = [
-            SuperDiff::Csi::FourBitColor.new(:blue, layer: :foreground),
-            SuperDiff::Csi::EightBitColor.new(
-              red: 3,
-              green: 8,
-              blue: 4,
-              layer: :foreground,
-            ),
-            SuperDiff::Csi::TwentyFourBitColor.new(
-              red: 47,
-              green: 164,
-              blue: 59,
-              layer: :foreground,
-            ),
-          ]
-          string_to_inspect = [
-            colorize("This is a line", colors[0]),
-            colorize("And that's a line", colors[1]),
-            colorize("And there's a line too", colors[2]),
-          ].join("\n")
+        context "given as_lines: false" do
+          it "returns an inspected version of string with the color codes escaped" do
+            colors = [
+              SuperDiff::Csi::FourBitColor.new(:blue, layer: :foreground),
+              SuperDiff::Csi::EightBitColor.new(
+                red: 3,
+                green: 8,
+                blue: 4,
+                layer: :foreground,
+              ),
+              SuperDiff::Csi::TwentyFourBitColor.new(
+                red: 47,
+                green: 164,
+                blue: 59,
+                layer: :foreground,
+              ),
+            ]
+            string_to_inspect = [
+              colored("This is a line", colors[0]),
+              colored("And that's a line", colors[1]),
+              colored("And there's a line too", colors[2]),
+            ].join("\n")
 
-          inspection = described_class.inspect(
-            string_to_inspect,
-            as_single_line: true,
-          )
-          # TODO: Figure out how to represent a colorized string inside of an
-          # already colorized string
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            "\\e[34mThis is a line\\e[0m\\n\\e[38;5;176mAnd that's a line\\e[0m\\n\\e[38;2;47;59;164mAnd there's a line too\\e[0m"
-          INSPECTION
+            inspection = described_class.inspect(
+              string_to_inspect,
+              as_lines: false,
+            )
+            # TODO: Figure out how to represent a colorized string inside of an
+            # already colorized string
+            expect(inspection).to eq(
+              %("\\e[34mThis is a line\\e[0m\\n\\e[38;5;176mAnd that's a line\\e[0m\\n\\e[38;2;47;59;164mAnd there's a line too\\e[0m"),
+            )
+          end
+        end
+
+        context "given as_lines: true" do
+          it "returns an inspected version of the string, with the color codes escaped, wrapped in a Line" do
+            colors = [
+              SuperDiff::Csi::FourBitColor.new(:blue, layer: :foreground),
+              SuperDiff::Csi::EightBitColor.new(
+                red: 3,
+                green: 8,
+                blue: 4,
+                layer: :foreground,
+              ),
+              SuperDiff::Csi::TwentyFourBitColor.new(
+                red: 47,
+                green: 164,
+                blue: 59,
+                layer: :foreground,
+              ),
+            ]
+            string_to_inspect = [
+              colored("This is a line", colors[0]),
+              colored("And that's a line", colors[1]),
+              colored("And there's a line too", colors[2]),
+            ].join("\n")
+
+            tiered_lines = described_class.inspect(
+              string_to_inspect,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
+            )
+            # TODO: Figure out how to represent a colorized string inside of an
+            # already colorized string
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %("\\e[34mThis is a line\\e[0m\\n\\e[38;5;176mAnd that's a line\\e[0m\\n\\e[38;2;47;59;164mAnd there's a line too\\e[0m")
+              ),
+            ])
+          end
         end
       end
     end
 
     context "given an array" do
       context "containing only primitive values" do
-        context "given as_single_line: true" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the array" do
+            string = described_class.inspect(
               ["foo", 2, :baz],
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to eq(%(["foo", 2, :baz]))
+            expect(string).to eq(%(["foo", 2, :baz]))
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the array across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the array as multiple Lines" do
+            tiered_lines = described_class.inspect(
               ["foo", 2, :baz],
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            expect(inspection).to eq(<<~INSPECTION.rstrip)
-              [
-                "foo",
-                2,
-                :baz
-              ]
-            INSPECTION
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %([),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %("foo"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %(2),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %(:baz),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(]),
+                collection_bookend: :close,
+              ),
+            ])
           end
         end
       end
 
       context "containing other arrays" do
-        context "given as_single_line: true" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the array" do
+            string = described_class.inspect(
               [
                 "foo",
                 ["bar", "baz"],
                 "qux",
               ],
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to eq(%(["foo", ["bar", "baz"], "qux"]))
+            expect(string).to eq(%(["foo", ["bar", "baz"], "qux"]))
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the array across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the array as multiple Lines" do
+            tiered_lines = described_class.inspect(
               [
                 "foo",
                 ["bar", "baz"],
                 "qux",
               ],
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            expect(inspection).to eq(<<~INSPECTION.rstrip)
-              [
-                "foo",
-                [
-                  "bar",
-                  "baz"
-                ],
-                "qux"
-              ]
-            INSPECTION
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %([),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %("foo"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %([),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: %("bar"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: %("baz"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %(]),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %("qux"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(]),
+                collection_bookend: :close,
+              ),
+            ])
           end
         end
       end
 
       context "which is empty" do
-        context "given as_single_line: true" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect([], as_single_line: true)
-            expect(inspection).to eq(%([]))
+        context "given as_lines: false" do
+          it "returns an inspected version of the array" do
+            string = described_class.inspect([], as_lines: false)
+            expect(string).to eq(%([]))
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect([], as_single_line: false)
-            expect(inspection).to eq(%([]))
+        context "given as_lines: true" do
+          it "returns an inspected version of the array as multiple Lines" do
+            tiered_lines = described_class.inspect(
+              [],
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
+            )
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %([]),
+              ),
+            ])
           end
         end
       end
@@ -242,68 +472,115 @@ RSpec.describe SuperDiff::ObjectInspection do
     context "given a hash" do
       context "containing only primitive values" do
         context "where all of the keys are symbols" do
-          context "given as_single_line: true" do
-            it "returns a representation of the hash on a single line" do
-              inspection = described_class.inspect(
+          context "given as_lines: false" do
+            it "returns an inspected version of the hash" do
+              string = described_class.inspect(
                 # rubocop:disable Style/HashSyntax
                 { :foo => "bar", :baz => "qux" },
                 # rubocop:enable Style/HashSyntax
-                as_single_line: true,
+                as_lines: false,
               )
-              expect(inspection).to eq(%({ foo: "bar", baz: "qux" }))
+              expect(string).to eq(%({ foo: "bar", baz: "qux" }))
             end
           end
 
-          context "given as_single_line: false" do
-            it "returns a representation of the hash across multiple lines" do
-              inspection = described_class.inspect(
+          context "given as_lines: true" do
+            it "returns an inspected version of the hash as multiple Lines" do
+              tiered_lines = described_class.inspect(
                 # rubocop:disable Style/HashSyntax
                 { :foo => "bar", :baz => "qux" },
                 # rubocop:enable Style/HashSyntax
-                as_single_line: false,
+                as_lines: true,
+                type: :delete,
+                indentation_level: 1,
               )
-              expect(inspection).to eq(<<~INSPECTION.rstrip)
-                {
-                  foo: "bar",
-                  baz: "qux"
-                }
-              INSPECTION
+              expect(tiered_lines).to match([
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 1,
+                  value: %({),
+                  collection_bookend: :open,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 2,
+                  prefix: %(foo: ),
+                  value: %("bar"),
+                  add_comma: true,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 2,
+                  prefix: %(baz: ),
+                  value: %("qux"),
+                  add_comma: false,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 1,
+                  value: %(}),
+                  collection_bookend: :close,
+                ),
+              ])
             end
           end
         end
 
         context "where only some of the keys are symbols" do
-          context "given as_single_line: true" do
-            it "returns a representation of the hash on a single line" do
-              inspection = described_class.inspect(
+          context "given as_lines: false" do
+            it "returns an inspected version of the hash" do
+              string = described_class.inspect(
                 { :foo => "bar", 2 => "baz" },
-                as_single_line: true,
+                as_lines: false,
               )
-              expect(inspection).to eq(%({ :foo => "bar", 2 => "baz" }))
+              expect(string).to eq(%({ :foo => "bar", 2 => "baz" }))
             end
           end
 
-          context "given as_single_line: false" do
-            it "returns a representation of the hash across multiple lines" do
-              inspection = described_class.inspect(
+          context "given as_lines: true" do
+            it "returns an inspected version of the hash as multiple Lines" do
+              tiered_lines = described_class.inspect(
                 { :foo => "bar", 2 => "baz" },
-                as_single_line: false,
+                as_lines: true,
+                type: :delete,
+                indentation_level: 1,
               )
-              expect(inspection).to eq(<<~INSPECTION.rstrip)
-                {
-                  :foo => "bar",
-                  2 => "baz"
-                }
-              INSPECTION
+              expect(tiered_lines).to match([
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 1,
+                  value: %({),
+                  collection_bookend: :open,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 2,
+                  prefix: %(:foo => ),
+                  value: %("bar"),
+                  add_comma: true,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 2,
+                  prefix: %(2 => ),
+                  value: %("baz"),
+                  add_comma: false,
+                ),
+                an_object_having_attributes(
+                  type: :delete,
+                  indentation_level: 1,
+                  value: %(}),
+                  collection_bookend: :close,
+                ),
+              ])
             end
           end
         end
       end
 
       context "containing other hashes" do
-        context "given as_single_line: true" do
-          it "returns a representation of the hash on a single line" do
-            # TODO: Update this with a key/value pair before AND after
+        context "given as_lines: false" do
+          it "returns an inspected version of the hash" do
             value_to_inspect = {
               # rubocop:disable Style/HashSyntax
               :category_name => "Appliances",
@@ -314,20 +591,20 @@ RSpec.describe SuperDiff::ObjectInspection do
               :number_of_products => 2,
               # rubocop:enable Style/HashSyntax
             }
-            inspection = described_class.inspect(
+            string = described_class.inspect(
               value_to_inspect,
-              as_single_line: true,
+              as_lines: false,
             )
             # rubocop:disable Metrics/LineLength
-            expect(inspection).to eq(
+            expect(string).to eq(
               %({ category_name: "Appliances", products_by_sku: { "EMDL-2934" => { id: 4, name: "Jordan Air" }, "KDS-3912" => { id: 8, name: "Chevy Impala" } }, number_of_products: 2 }),
             )
             # rubocop:enable Metrics/LineLength
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the array across multiple lines" do
+        context "given as_lines: true" do
+          it "returns an inspected version of the array as multiple Lines" do
             value_to_inspect = {
               # rubocop:disable Style/HashSyntax
               :category_name => "Appliances",
@@ -338,103 +615,230 @@ RSpec.describe SuperDiff::ObjectInspection do
               :number_of_products => 2,
               # rubocop:enable Style/HashSyntax
             }
-            inspection = described_class.inspect(
+            tiered_lines = described_class.inspect(
               value_to_inspect,
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            expect(inspection).to eq(<<~INSPECTION.rstrip)
-              {
-                category_name: "Appliances",
-                products_by_sku: {
-                  "EMDL-2934" => {
-                    id: 4,
-                    name: "George Foreman Grill"
-                  },
-                  "KDS-3912" => {
-                    id: 8,
-                    name: "Magic Bullet"
-                  }
-                },
-                number_of_products: 2
-              }
-            INSPECTION
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %({),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(category_name: ),
+                value: %("Appliances"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(products_by_sku: ),
+                value: %({),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %("EMDL-2934" => ),
+                value: %({),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(id: ),
+                value: %(4),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(name: ),
+                value: %("George Foreman Grill"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: "",
+                value: %(}),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %("KDS-3912" => ),
+                value: %({),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(id: ),
+                value: %(8),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(name: ),
+                value: %("Magic Bullet"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: "",
+                value: %(}),
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: "",
+                value: %(}),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(number_of_products: ),
+                value: %(2),
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                prefix: "",
+                value: %(}),
+              ),
+            ])
           end
         end
       end
 
       context "which is empty" do
-        context "given as_single_line: true" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect({}, as_single_line: true)
-            expect(inspection).to eq(%({}))
+        context "given as_lines: false" do
+          it "returns an inspected version of the array" do
+            string = described_class.inspect({}, as_lines: false)
+            expect(string).to eq(%({}))
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect({}, as_single_line: false)
-            expect(inspection).to eq(%({}))
+        context "given as_lines: true" do
+          it "returns an inspected version of the array" do
+            tiered_lines = described_class.inspect(
+              {},
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
+            )
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %({}),
+              ),
+            ])
           end
         end
       end
     end
 
     context "given a class" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
+      context "given as_lines: false" do
+        it "returns an inspected version of the object" do
+          string = described_class.inspect(
             SuperDiff::Test::Person,
-            as_single_line: true,
+            as_lines: false,
           )
-          expect(inspection).to eq("SuperDiff::Test::Person")
+          expect(string).to eq("SuperDiff::Test::Person")
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
+      context "given as_lines: true" do
+        it "returns an inspected version of the object" do
+          tiered_lines = described_class.inspect(
             SuperDiff::Test::Person,
-            as_single_line: false,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
           )
-          expect(inspection).to eq("SuperDiff::Test::Person")
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(SuperDiff::Test::Person),
+            ),
+          ])
         end
       end
     end
 
+    # TODO: Add when empty
     context "given a custom object" do
       context "containing only primitive values" do
-        context "given as_single_line: true" do
-          it "returns a representation of the object on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the object" do
+            string = described_class.inspect(
               SuperDiff::Test::Person.new(name: "Doc", age: 58),
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to eq(
+            expect(string).to eq(
               %(#<SuperDiff::Test::Person name: "Doc", age: 58>),
             )
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the object across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the object as multiple Lines" do
+            tiered_lines = described_class.inspect(
               SuperDiff::Test::Person.new(name: "Doc", age: 58),
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            expect(inspection).to eq(<<~INSPECTION.rstrip)
-              #<SuperDiff::Test::Person {
-                name: "Doc",
-                age: 58
-              }>
-            INSPECTION
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(#<SuperDiff::Test::Person {),
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(name: ),
+                value: %("Doc"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(age: ),
+                value: %(58),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(}>),
+              ),
+            ])
           end
         end
       end
 
       context "containing other custom objects" do
-        context "given as_single_line: true" do
-          it "returns a representation of the object on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the object" do
+            string = described_class.inspect(
               SuperDiff::Test::Customer.new(
                 name: "Marty McFly",
                 shipping_address: SuperDiff::Test::ShippingAddress.new(
@@ -446,9 +850,9 @@ RSpec.describe SuperDiff::ObjectInspection do
                 ),
                 phone: "111-222-3333",
               ),
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to eq(
+            expect(string).to eq(
               # rubocop:disable Metrics/LineLength
               %(#<SuperDiff::Test::Customer name: "Marty McFly", shipping_address: #<SuperDiff::Test::ShippingAddress line_1: "123 Main St.", line_2: "", city: "Hill Valley", state: "CA", zip: "90382">, phone: "111-222-3333">),
               # rubocop:enable Metrics/LineLength
@@ -456,9 +860,9 @@ RSpec.describe SuperDiff::ObjectInspection do
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the object across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the object as multiple Lines" do
+            tiered_lines = described_class.inspect(
               SuperDiff::Test::Customer.new(
                 name: "Marty McFly",
                 shipping_address: SuperDiff::Test::ShippingAddress.new(
@@ -470,21 +874,88 @@ RSpec.describe SuperDiff::ObjectInspection do
                 ),
                 phone: "111-222-3333",
               ),
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            expect(inspection).to eq(<<~INSPECTION.rstrip)
-              #<SuperDiff::Test::Customer {
-                name: "Marty McFly",
-                shipping_address: #<SuperDiff::Test::ShippingAddress {
-                  line_1: "123 Main St.",
-                  line_2: "",
-                  city: "Hill Valley",
-                  state: "CA",
-                  zip: "90382"
-                }>,
-                phone: "111-222-3333"
-              }>
-            INSPECTION
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(#<SuperDiff::Test::Customer {),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(name: ),
+                value: %("Marty McFly"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(shipping_address: ),
+                value: %(#<SuperDiff::Test::ShippingAddress {),
+                add_comma: false,
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %(line_1: ),
+                value: %("123 Main St."),
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %(line_2: ),
+                value: %(""),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %(city: ),
+                value: %("Hill Valley"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %(state: ),
+                value: %("CA"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                prefix: %(zip: ),
+                value: %("90382"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %(}>),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(phone: ),
+                value: %("111-222-3333"),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(}>),
+                add_comma: false,
+                collection_bookend: :close,
+              ),
+            ])
           end
         end
       end
@@ -492,55 +963,78 @@ RSpec.describe SuperDiff::ObjectInspection do
 
     context "given a non-custom object" do
       context "containing only primitive values" do
-        context "given as_single_line: true" do
-          it "returns a representation of the object on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the object" do
+            string = described_class.inspect(
               SuperDiff::Test::Item.new(
                 name: "mac and cheese",
                 quantity: 2,
               ),
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to match(
-              # rubocop:disable Metrics/LineLength
+            expect(string).to match(
               /\A#<SuperDiff::Test::Item:0x[a-z0-9]+ @name="mac and cheese", @quantity=2>\Z/,
-              # rubocop:enable Metrics/LineLength
             )
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the object across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the object as multiple Lines" do
+            tiered_lines = described_class.inspect(
               SuperDiff::Test::Item.new(
                 name: "mac and cheese",
                 quantity: 2,
               ),
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            regexp = <<~INSPECTION.rstrip
-              #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                @name="mac and cheese",
-                @quantity=2
-              \\}>
-            INSPECTION
-            expect(inspection).to match(/\A#{regexp}\Z/)
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+                ),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(@name=),
+                value: %("mac and cheese"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(@quantity=),
+                value: %(2),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(}>),
+                collection_bookend: :close,
+              ),
+            ])
           end
         end
       end
 
       context "containing other custom objects" do
-        context "given as_single_line: true" do
-          it "returns a representation of the object on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the object" do
+            string = described_class.inspect(
               SuperDiff::Test::Order.new([
                 SuperDiff::Test::Item.new(name: "ham", quantity: 1),
                 SuperDiff::Test::Item.new(name: "eggs", quantity: 2),
                 SuperDiff::Test::Item.new(name: "cheese", quantity: 1),
               ]),
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to match(
+            expect(string).to match(
               # rubocop:disable Metrics/LineLength
               /\A#<SuperDiff::Test::Order:0x[a-z0-9]+ @items=\[#<SuperDiff::Test::Item:0x[a-z0-9]+ @name="ham", @quantity=1>, #<SuperDiff::Test::Item:0x[a-z0-9]+ @name="eggs", @quantity=2>, #<SuperDiff::Test::Item:0x[a-z0-9]+ @name="cheese", @quantity=1>\]>\Z/,
               # rubocop:enable Metrics/LineLength
@@ -548,436 +1042,183 @@ RSpec.describe SuperDiff::ObjectInspection do
           end
         end
 
-        context "given as_single_line: false" do
-          it "returns a representation of the object across multiple lines" do
-            inspection = described_class.inspect(
+        context "given as_lines: true" do
+          it "returns an inspected version of the object as multiple Lines" do
+            tiered_lines = described_class.inspect(
               SuperDiff::Test::Order.new([
                 SuperDiff::Test::Item.new(name: "ham", quantity: 1),
                 SuperDiff::Test::Item.new(name: "eggs", quantity: 2),
                 SuperDiff::Test::Item.new(name: "cheese", quantity: 1),
               ]),
-              as_single_line: false,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-            regexp = <<~INSPECTION.rstrip
-              #<SuperDiff::Test::Order:0x[a-z0-9]+ \\{
-                @items=\\[
-                  #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                    @name="ham",
-                    @quantity=1
-                  \\}>,
-                  #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                    @name="eggs",
-                    @quantity=2
-                  \\}>,
-                  #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                    @name="cheese",
-                    @quantity=1
-                  \\}>
-                \\]
-              }>
-            INSPECTION
-            expect(inspection).to match(/\A#{regexp}\Z/)
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::Order:0x[a-f0-9]+ \{),
+                ),
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                prefix: %(@items=),
+                value: %([),
+                add_comma: false,
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+                ),
+                add_comma: false,
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@name=),
+                value: %("ham"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@quantity=),
+                value: %(1),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: %(}>),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+                ),
+                add_comma: false,
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@name=),
+                value: %("eggs"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@quantity=),
+                value: %(2),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: %(}>),
+                add_comma: true,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+                ),
+                add_comma: false,
+                collection_bookend: :open,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@name=),
+                value: %("cheese"),
+                add_comma: true,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 4,
+                prefix: %(@quantity=),
+                value: %(1),
+                add_comma: false,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 3,
+                value: %(}>),
+                add_comma: false,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 2,
+                value: %(]),
+                add_comma: false,
+                collection_bookend: :close,
+              ),
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: %(}>),
+                add_comma: false,
+                collection_bookend: :close,
+              ),
+            ])
           end
         end
       end
 
       context "which is empty" do
-        context "given as_single_line: true" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect(
+        context "given as_lines: false" do
+          it "returns an inspected version of the array" do
+            string = described_class.inspect(
               SuperDiff::Test::EmptyClass.new,
-              as_single_line: true,
+              as_lines: false,
             )
-            expect(inspection).to match(
-              /#<SuperDiff::Test::EmptyClass:0x[a-z0-9]+>/
-            )
-          end
-        end
-
-        context "given as_single_line: false" do
-          it "returns a representation of the array on a single line" do
-            inspection = described_class.inspect(
-              SuperDiff::Test::EmptyClass.new,
-              as_single_line: false,
-            )
-            expect(inspection).to match(
+            expect(string).to match(
               /#<SuperDiff::Test::EmptyClass:0x[a-z0-9]+>/,
             )
           end
         end
-      end
-    end
 
-    context "given a hash-including-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_hash_including(foo: "bar", baz: "qux"),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<a hash including (foo: "bar", baz: "qux")>),
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            a_hash_including(foo: "bar", baz: "qux"),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<a hash including (
-              foo: "bar",
-              baz: "qux"
-            )>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given a collection-including-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_collection_including(1, 2, 3),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<a collection including (1, 2, 3)>),
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            a_collection_including(1, 2, 3),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<a collection including (
-              1,
-              2,
-              3
-            )>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given a fuzzy object" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            an_object_having_attributes(foo: "bar", baz: "qux"),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<an object having attributes (foo: "bar", baz: "qux")>),
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            an_object_having_attributes(foo: "bar", baz: "qux"),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<an object having attributes (
-              foo: "bar",
-              baz: "qux"
-            )>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given a collection-containing-exactly-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_collection_containing_exactly("foo", "bar", "baz"),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<a collection containing exactly ("foo", "bar", "baz")>),
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            a_collection_containing_exactly("foo", "bar", "baz"),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<a collection containing exactly (
-              "foo",
-              "bar",
-              "baz"
-            )>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given a kind-of-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_kind_of(Symbol),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(%(#<a kind of Symbol>))
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_kind_of(Symbol),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(%(#<a kind of Symbol>))
-        end
-      end
-    end
-
-    context "given an-instance-of-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            an_instance_of(Symbol),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(%(#<an instance of Symbol>))
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            an_instance_of(Symbol),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(%(#<an instance of Symbol>))
-        end
-      end
-    end
-
-    context "given a-value-within-<something>" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_value_within(1).of(Time.utc(2020, 4, 9)),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<a value within 1 of 2020-04-09 00:00:00.000 UTC +00:00 (Time)>),
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            a_value_within(1).of(Time.utc(2020, 4, 9)),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(
-            %(#<a value within 1 of 2020-04-09 00:00:00.000 UTC +00:00 (Time)>),
-          )
-        end
-      end
-    end
-
-    context "given a Double" do
-      context "that is anonymous" do
-        context "given as_single_line: true" do
-          it "returns a representation of the object on a single line" do
-            inspection = described_class.inspect(
-              double(foo: "bar", baz: "qux"),
-              as_single_line: true,
+        context "given as_lines: true" do
+          it "returns an inspected version of the array" do
+            tiered_lines = described_class.inspect(
+              SuperDiff::Test::EmptyClass.new,
+              as_lines: true,
+              type: :delete,
+              indentation_level: 1,
             )
-
-            expect(inspection).to eq("#<Double (anonymous)>")
+            expect(tiered_lines).to match([
+              an_object_having_attributes(
+                type: :delete,
+                indentation_level: 1,
+                value: a_string_matching(
+                  %r(#<SuperDiff::Test::EmptyClass:0x[a-f0-9]+>),
+                ),
+              ),
+            ])
           end
-        end
-
-        context "given as_single_line: false" do
-          it "returns a representation of the object across multiple lines" do
-            inspection = described_class.inspect(
-              double(foo: "bar", baz: "qux"),
-              as_single_line: false,
-            )
-
-            expect(inspection).to eq("#<Double (anonymous)>")
-          end
-        end
-      end
-    end
-
-    context "given an ActiveRecord object", active_record: true do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            SuperDiff::Test::Models::ActiveRecord::Person.new(
-              name: "Elliot",
-              age: 31,
-            ),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<SuperDiff::Test::Models::ActiveRecord::Person id: nil, age: 31, name: "Elliot">)
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            SuperDiff::Test::Models::ActiveRecord::Person.new(
-              name: "Elliot",
-              age: 31,
-            ),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<SuperDiff::Test::Models::ActiveRecord::Person {
-              id: nil,
-              age: 31,
-              name: "Elliot"
-            }>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given an ActiveRecord::Relation object", active_record: true do
-      context "given as_single_line: true" do
-        it "returns a representation of the Relation on a single line" do
-          SuperDiff::Test::Models::ActiveRecord::Person.create!(
-            name: "Marty",
-            age: 19,
-          )
-          SuperDiff::Test::Models::ActiveRecord::Person.create!(
-            name: "Jennifer",
-            age: 17,
-          )
-
-          inspection = described_class.inspect(
-            SuperDiff::Test::Models::ActiveRecord::Person.all,
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<ActiveRecord::Relation [#<SuperDiff::Test::Models::ActiveRecord::Person id: 1, age: 19, name: "Marty">, #<SuperDiff::Test::Models::ActiveRecord::Person id: 2, age: 17, name: "Jennifer">]>)
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the Relation across multiple lines" do
-          SuperDiff::Test::Models::ActiveRecord::Person.create!(
-            name: "Marty",
-            age: 19,
-          )
-          SuperDiff::Test::Models::ActiveRecord::Person.create!(
-            name: "Jennifer",
-            age: 17,
-          )
-
-          inspection = described_class.inspect(
-            SuperDiff::Test::Models::ActiveRecord::Person.all,
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<ActiveRecord::Relation [
-              #<SuperDiff::Test::Models::ActiveRecord::Person {
-                id: 1,
-                age: 19,
-                name: "Marty"
-              }>,
-              #<SuperDiff::Test::Models::ActiveRecord::Person {
-                id: 2,
-                age: 17,
-                name: "Jennifer"
-              }>
-            ]>
-          INSPECTION
-        end
-      end
-    end
-
-    context "given a HashWithIndifferentAccess", active_record: true do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
-            HashWithIndifferentAccess.new({
-              line_1: "123 Main St.",
-              city: "Hill Valley",
-              state: "CA",
-              zip: "90382",
-            }),
-            as_single_line: true,
-          )
-
-          expect(inspection).to eq(
-            %(#<HashWithIndifferentAccess { "line_1" => "123 Main St.", "city" => "Hill Valley", "state" => "CA", "zip" => "90382" }>)
-          )
-        end
-      end
-
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
-            HashWithIndifferentAccess.new({
-              line_1: "123 Main St.",
-              city: "Hill Valley",
-              state: "CA",
-              zip: "90382",
-            }),
-            as_single_line: false,
-          )
-
-          expect(inspection).to eq(<<~INSPECTION.rstrip)
-            #<HashWithIndifferentAccess {
-              "line_1" => "123 Main St.",
-              "city" => "Hill Valley",
-              "state" => "CA",
-              "zip" => "90382"
-            }>
-          INSPECTION
         end
       end
     end
 
     context "given a combination of all kinds of values" do
-      context "given as_single_line: true" do
-        it "returns a representation of the object on a single line" do
-          inspection = described_class.inspect(
+      context "given as_lines: false" do
+        it "returns an inspected version of the object" do
+          string = described_class.inspect(
             {
               state: :down,
               errors: [
@@ -1019,9 +1260,9 @@ RSpec.describe SuperDiff::ObjectInspection do
                 ),
               ],
             },
-            as_single_line: true,
+            as_lines: false,
           )
-          expect(inspection).to match(
+          expect(string).to match(
             # rubocop:disable Metrics/LineLength
             /\A\{ state: :down, errors: \["Container A-234 is partially damaged", "Vessel B042 was attacked by raccoons", "Product FDK-3429 is out of stock"\], mission_critical: true, serviceable: false, outstanding_orders: \[#<SuperDiff::Test::Order:0x[a-z0-9]+ @items=\[#<SuperDiff::Test::Item:0x[a-z0-9]+ @name="ham", @quantity=1>, #<SuperDiff::Test::Item:0x[a-z0-9]+ @name="eggs", @quantity=2>, #<SuperDiff::Test::Item:0x[a-z0-9]+ @name="cheese", @quantity=1>\]>\], customers: \[#<SuperDiff::Test::Customer name: "Marty McFly", shipping_address: #<SuperDiff::Test::ShippingAddress line_1: "123 Baltic Ave.", line_2: "", city: "Hill Valley", state: "CA", zip: "90382">, phone: "111-111-1111">, #<SuperDiff::Test::Customer name: "Doc Brown", shipping_address: #<SuperDiff::Test::ShippingAddress line_1: "456 Park Place", line_2: "", city: "Beverly Hills", state: "CA", zip: "90210">, phone: "222-222-2222">\] \}\Z/,
             # rubocop:enable Metrics/LineLength
@@ -1029,9 +1270,9 @@ RSpec.describe SuperDiff::ObjectInspection do
         end
       end
 
-      context "given as_single_line: false" do
-        it "returns a representation of the object across multiple lines" do
-          inspection = described_class.inspect(
+      context "given as_lines: true" do
+        it "returns an inspected version of the object as multiple Lines" do
+          tiered_lines = described_class.inspect(
             {
               state: :down,
               errors: [
@@ -1073,96 +1314,431 @@ RSpec.describe SuperDiff::ObjectInspection do
                 ),
               ],
             },
-            as_single_line: false,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
           )
-          regexp = <<~INSPECTION.rstrip
-            \\{
-              state: :down,
-              errors: \\[
-                "Container A-234 is partially damaged",
-                "Vessel B042 was attacked by raccoons",
-                "Product FDK-3429 is out of stock"
-              \\],
-              mission_critical: true,
-              serviceable: false,
-              outstanding_orders: \\[
-                #<SuperDiff::Test::Order:0x[a-z0-9]+ \\{
-                  @items=\\[
-                    #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                      @name="ham",
-                      @quantity=1
-                    \\}>,
-                    #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                      @name="eggs",
-                      @quantity=2
-                    \\}>,
-                    #<SuperDiff::Test::Item:0x[a-z0-9]+ \\{
-                      @name="cheese",
-                      @quantity=1
-                    \\}>
-                  \\]
-                \\}>
-              \\],
-              customers: \\[
-                #<SuperDiff::Test::Customer \\{
-                  name: "Marty McFly",
-                  shipping_address: #<SuperDiff::Test::ShippingAddress \\{
-                    line_1: "123 Baltic Ave.",
-                    line_2: "",
-                    city: "Hill Valley",
-                    state: "CA",
-                    zip: "90382"
-                  \\}>,
-                  phone: "111-111-1111"
-                \\}>,
-                #<SuperDiff::Test::Customer \\{
-                  name: "Doc Brown",
-                  shipping_address: #<SuperDiff::Test::ShippingAddress \\{
-                    line_1: "456 Park Place",
-                    line_2: "",
-                    city: "Beverly Hills",
-                    state: "CA",
-                    zip: "90210"
-                  \\}>,
-                  phone: "222-222-2222"
-                \\}>
-              \\]
-            \\}
-          INSPECTION
-          expect(inspection).to match(/\A#{regexp}\Z/)
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %({),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(state: ),
+              value: %(:down),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(errors: ),
+              value: %([),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %("Container A-234 is partially damaged"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %("Vessel B042 was attacked by raccoons"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %("Product FDK-3429 is out of stock"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %(]),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(mission_critical: ),
+              value: %(true),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(serviceable: ),
+              value: %(false),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(outstanding_orders: ),
+              value: %([),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: a_string_matching(
+                %r(#<SuperDiff::Test::Order:0x[a-f0-9]+ \{),
+              ),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(@items=),
+              value: %([),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: a_string_matching(
+                %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+              ),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@name=),
+              value: %("ham"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@quantity=),
+              value: %(1),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: %(}>),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: a_string_matching(
+                %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+              ),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@name=),
+              value: %("eggs"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@quantity=),
+              value: %(2),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: %(}>),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: a_string_matching(
+                %r(#<SuperDiff::Test::Item:0x[a-f0-9]+ \{),
+              ),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@name=),
+              value: %("cheese"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 6,
+              prefix: %(@quantity=),
+              value: %(1),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              value: %(}>),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              value: %(]),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %(}>),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %(]),
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              prefix: %(customers: ),
+              value: %([),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %(#<SuperDiff::Test::Customer {),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(name: ),
+              value: %("Marty McFly"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(shipping_address: ),
+              value: %(#<SuperDiff::Test::ShippingAddress {),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(line_1: ),
+              value: %("123 Baltic Ave."),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(line_2: ),
+              value: %(""),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(city: ),
+              value: %("Hill Valley"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(state: ),
+              value: %("CA"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(zip: ),
+              value: %("90382"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              value: %(}>),
+              add_comma: true,
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(phone: ),
+              value: %("111-111-1111"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %(}>),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %(#<SuperDiff::Test::Customer {),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(name: ),
+              value: %("Doc Brown"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(shipping_address: ),
+              value: %(#<SuperDiff::Test::ShippingAddress {),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(line_1: ),
+              value: %("456 Park Place"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(line_2: ),
+              value: %(""),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(city: ),
+              value: %("Beverly Hills"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(state: ),
+              value: %("CA"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 5,
+              prefix: %(zip: ),
+              value: %("90210"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              value: %(}>),
+              add_comma: true,
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 4,
+              prefix: %(phone: ),
+              value: %("222-222-2222"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 3,
+              value: %(}>),
+              add_comma: false,
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %(]),
+              add_comma: false,
+              collection_bookend: :close,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(}),
+              collection_bookend: :close,
+            ),
+          ])
         end
       end
     end
-  end
 
-  context "given a data structure that refers to itself somewhere inside of it" do
-    context "given as_single_line: true" do
-      it "replaces the reference with ∙∙∙" do
-        value = ["a", "b", "c"]
-        value.insert(1, value)
-        inspection = described_class.inspect(value, as_single_line: true)
-        expect(inspection).to eq(%(["a", ∙∙∙, "b", "c"]))
+    context "given a data structure that refers to itself somewhere inside of it" do
+      context "given as_lines: false" do
+        it "replaces the reference with ∙∙∙" do
+          value = ["a", "b", "c"]
+          value.insert(1, value)
+          string = described_class.inspect(value, as_lines: false)
+          expect(string).to eq(%(["a", ∙∙∙, "b", "c"]))
+        end
+      end
+
+      context "given as_lines: true" do
+        it "replaces the reference with ∙∙∙" do
+          value = ["a", "b", "c"]
+          value.insert(1, value)
+          tiered_lines = described_class.inspect(
+            value,
+            as_lines: true,
+            type: :delete,
+            indentation_level: 1,
+          )
+          expect(tiered_lines).to match([
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %([),
+              collection_bookend: :open,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %("a"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %(∙∙∙),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %("b"),
+              add_comma: true,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 2,
+              value: %("c"),
+              add_comma: false,
+            ),
+            an_object_having_attributes(
+              type: :delete,
+              indentation_level: 1,
+              value: %(]),
+              collection_bookend: :close,
+            ),
+          ])
+        end
       end
     end
 
-    context "given as_single_line: false" do
-      it "replaces the reference with ∙∙∙" do
-        value = ["a", "b", "c"]
-        value.insert(1, value)
-        inspection = described_class.inspect(value, as_single_line: false)
-        expect(inspection).to eq(<<~INSPECTION.rstrip)
-          [
-            "a",
-            ∙∙∙,
-            "b",
-            "c"
-          ]
-        INSPECTION
-      end
-    end
-  end
-
-  def colorize(*args, **opts, &block)
-    SuperDiff::Helpers.style(*args, **opts, &block).to_s.chomp
+    context "given a data structure that refers to itself in a nested data structure"
   end
 end

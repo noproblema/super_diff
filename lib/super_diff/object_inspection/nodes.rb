@@ -1,8 +1,19 @@
 module SuperDiff
   module ObjectInspection
     module Nodes
+      autoload(
+        :AsLinesWhenRenderingToLines,
+        "super_diff/object_inspection/nodes/as_lines_when_rendering_to_lines",
+      )
+      autoload(
+        :AsPrefixWhenRenderingToLines,
+        "super_diff/object_inspection/nodes/as_prefix_when_rendering_to_lines",
+      )
+      autoload(
+        :AsSingleLine,
+        "super_diff/object_inspection/nodes/as_single_line",
+      )
       autoload :Base, "super_diff/object_inspection/nodes/base"
-      autoload :Break, "super_diff/object_inspection/nodes/break"
       autoload :Inspection, "super_diff/object_inspection/nodes/inspection"
       autoload :Nesting, "super_diff/object_inspection/nodes/nesting"
       autoload :Text, "super_diff/object_inspection/nodes/text"
@@ -11,38 +22,36 @@ module SuperDiff
         "super_diff/object_inspection/nodes/when_empty",
       )
       autoload(
-        :WhenMultiline,
-        "super_diff/object_inspection/nodes/when_multiline",
-      )
-      autoload(
         :WhenNonEmpty,
         "super_diff/object_inspection/nodes/when_non_empty",
       )
       autoload(
-        :WhenSingleline,
-        "super_diff/object_inspection/nodes/when_singleline",
+        :WhenRenderingToLines,
+        "super_diff/object_inspection/nodes/when_rendering_to_lines",
       )
-
-      def self.fetch(type)
-        registry.fetch(type) do
-          raise(
-            KeyError,
-            "#{type.inspect} is not included in ObjectInspection::Nodes.registry!",
-          )
-        end
-      end
+      autoload(
+        :WhenRenderingToString,
+        "super_diff/object_inspection/nodes/when_rendering_to_string",
+      )
+      # autoload(
+        # :WithObject,
+        # "super_diff/object_inspection/nodes/with_object",
+      # )
 
       def self.registry
-        @_registry ||= {
-          break: Break,
-          inspection: Inspection,
-          nesting: Nesting,
-          text: Text,
-          when_empty: WhenEmpty,
-          when_multiline: WhenMultiline,
-          when_non_empty: WhenNonEmpty,
-          when_singleline: WhenSingleline,
-        }
+        @_registry ||= [
+          AsLinesWhenRenderingToLines,
+          AsPrefixWhenRenderingToLines,
+          AsSingleLine,
+          Inspection,
+          Text,
+          Nesting,
+          WhenEmpty,
+          WhenNonEmpty,
+          WhenRenderingToLines,
+          WhenRenderingToString,
+          # WithObject,
+        ]
       end
     end
   end

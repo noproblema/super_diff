@@ -7,9 +7,14 @@ class TestPlan
   SUPPORT_DIR = PROJECT_DIRECTORY.join("spec/support")
   INSIDE_INTEGRATION_TEST = true
 
-  def initialize(using_outside_of_zeus: false, color_enabled: false)
+  def initialize(
+    using_outside_of_zeus: false,
+    color_enabled: false,
+    configuration: {}
+  )
     @using_outside_of_zeus = using_outside_of_zeus
     @color_enabled = color_enabled
+    @configuration = configuration
     @libraries = []
   end
 
@@ -28,6 +33,13 @@ class TestPlan
       require "pry-byebug"
     rescue LoadError
       require "pry-nav"
+    end
+
+    # Fix Zeus for 0.13.0+
+    Pry::Pager.class_eval do
+      def best_available
+        Pry::Pager::NullPager.new(pry_instance.output)
+      end
     end
 
     require "rspec"
@@ -64,7 +76,7 @@ class TestPlan
 
   private
 
-  attr_reader :libraries
+  attr_reader :libraries, :configuration
 
   def using_outside_of_zeus?
     @using_outside_of_zeus
@@ -97,6 +109,11 @@ class TestPlan
       config.color_mode = color_enabled? ? :on : :off
     end
 
+    pp new_configuration: configuration.merge(color_enabled: color_enabled?)
+    SuperDiff.configuration.merge!(
+      configuration.merge(color_enabled: color_enabled?)
+    )
+
     yield if block_given?
 
     libraries.each do |library|
@@ -115,13 +132,6 @@ class TestPlan
       adapter: "sqlite3",
       database: ":memory:",
     )
-
-    RSpec.configuration do |config|
-      config.before do
-        SuperDiff::Test::Models::ActiveRecord::Person.delete_all
-        SuperDiff::Test::Models::ActiveRecord::ShippingAddress.delete_all
-      end
-    end
 
     Dir.glob(SUPPORT_DIR.join("models/active_record/*.rb")).sort.each do |path|
       require path

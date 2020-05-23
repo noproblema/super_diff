@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Bug fixes
+
+* Fix lack of commas in diffs (?).
+
+### Improvements
+
+* Change how objects are inspected on a single line so that instance variables
+  are always sorted.
+* Make a tweak to how hashes are presented in diffs and inspections: a hash that
+  has a mixture of symbols and strings will be presented as though all keys are
+  strings (i.e. hashrocket syntax).
+
 ## 0.5.0 - 2020-06-18
 
 ### Breaking changes

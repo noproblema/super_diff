@@ -19,11 +19,12 @@ module SuperDiff
       config.add_extra_operation_tree_builder_classes(
         OperationTreeBuilders::HashWithIndifferentAccess,
       )
-      config.add_extra_diff_formatter_classes(
-        DiffFormatters::HashWithIndifferentAccess,
-      )
-      config.add_extra_inspector_classes(
-        ObjectInspection::Inspectors::HashWithIndifferentAccess,
+      # TODO
+      # config.add_extra_diff_formatter_classes(
+        # DiffFormatters::HashWithIndifferentAccess,
+      # )
+      config.add_extra_inspection_tree_builder_classes(
+        ObjectInspection::InspectionTreeBuilders::HashWithIndifferentAccess,
       )
     end
   end
